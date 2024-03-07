@@ -14,7 +14,7 @@ const char *ext[] 	 = { ".h", ".hpp", ".hh" };
 
 constexpr size_t header_size = 256;
 constexpr size_t buffer_size = 64;
-constexpr size_t name_size = 24;
+constexpr size_t name_size   = 24;
 
 typedef unsigned char flag_t;
 enum { IS_CPP = (1 << 1), ALT_CPP = (1 << 2), ONLY_CPP = (1 << 3) };
@@ -122,13 +122,13 @@ int main(int argc, char *argv[])
 	if(context == nullptr) { perror(argv[0]); exit(EXIT_FAILURE); }
 
 	// Allocating memory and assigning default values
-	context->wants = 0x00;
-	context->filename = malloc(name_size);
-	context->projectname = malloc(name_size);
-	context->stem = malloc(name_size);
-	context->extension = malloc(6);
+	context->wants 		 = 0x00;
+	context->filename 	 = malloc(name_size);
+	context->projectname 	 = malloc(name_size);
+	context->stem 		 = malloc(name_size);
+	context->extension 	 = malloc(6);
 	context->formatted_guard = malloc(buffer_size);
-	context->header = malloc(header_size);
+	context->header 	 = malloc(header_size);
 	// And a memory check
 	if(context->filename == nullptr || context->projectname == nullptr ||
 	   context->stem == nullptr 	|| context->extension == nullptr   ||
@@ -145,7 +145,7 @@ int main(int argc, char *argv[])
 
 	// Set up everything that the user wants
 	setbit(&context->wants, IS_CPP);
-	//setbit(&context->wants, ALT_CPP);
+	setbit(&context->wants, ALT_CPP);
 	setbit(&context->wants, ONLY_CPP);
 
 	strncpy(context->projectname, project, name_size);
