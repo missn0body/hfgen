@@ -6,9 +6,11 @@
 // DEFINITIONS START HERE
 ////////////////////////////////////////////////////////////////////////////////////
 
+const char *VERSION = "1.0.0";
+
 const char *recipe 	 = "%s_%s_%s";
 const char *head_format  = "#ifndef %s\n#define %s\n\n%s\n#endif /*%s*/";
-const char *cpp_extern_c = "#ifdef __cplusplus\nextern \"C\" {\n#endif/*__cplusplus*/\n\n\n\n\n\n#ifdef __cplusplus\n}\n#endif/*__cplusplus*/\n";
+const char *cpp_extern_c = "#ifdef __cplusplus\nextern \"C\" {\n#endif /*__cplusplus*/\n\n\n\n\n\n#ifdef __cplusplus\n}\n#endif /*__cplusplus*/\n";
 const char *cpp_only 	 = "#ifndef __cplusplus\n#error \"This header is to only be used with C++ code.\"\n\n\n";
 const char *ext[] 	 = { ".h", ".hpp", ".hh" };
 
@@ -47,10 +49,10 @@ void make_file(hfgen *in, const char *file)
 	// Is it a C file?
 	if(!test(&in->wants, IS_CPP))
 	{
-		strncpy(in->extension, ext[0], name_size);
+		strncpy(in->extension, ext[0], 6);
 	}
 	// Otherwise, it's either .hh or .hpp
-	else strncpy(in->extension, (test(&in->wants, ALT_CPP)) ? ext[2] : ext[1], name_size);
+	else strncpy(in->extension, (test(&in->wants, ALT_CPP)) ? ext[2] : ext[1], 6);
 	strncat(in->filename, in->extension, name_size);
 }
 
@@ -71,6 +73,8 @@ void make_header(hfgen *in)
 {
 	if(in == nullptr || in->formatted_guard == nullptr) return;
 
+	// These booleans here are just to make the sprintf statements below
+	// a little bit shorter
 	bool cpp_guard = test(&in->wants, IS_CPP);
 	bool error_guard = test(&in->wants, ONLY_CPP) && cpp_guard;
 
@@ -92,7 +96,17 @@ void make_header(hfgen *in)
 	return;
 }
 
-void show_usage(void) { printf("usage.\n"); }
+void show_usage(void)
+{
+	printf("Header File GENerator (%s): pretty much what it says, by anson.\n", VERSION);
+	puts("usage:\n\thfgen -h / --help");
+	puts("\thfgen [-acop] filename projectname");
+	printf("options:\n\t%5s\t%s\n",	"-a, --alt-cpp",	"use \".hh\" instead of \".hpp\" for a C++ header file");
+        printf("\t%5s\t%s\n",		"-c, --cpp",		"generate a C++ rather than C header file");
+        printf("\t%5s\t%s\n",		"-o, --only-cpp",	"inserts a \"#warning\" directive to dissuade use with C code");
+        printf("\t%5s\t%s\n",		"-p, --preview",	"outputs to stdout rather than a file");
+	printf("\n\"--only-cpp\" will not have any effect unless it is paired with the \"--cpp\" flag\n");
+}
 
 void free_struct(void)
 {
@@ -106,14 +120,16 @@ void free_struct(void)
 
 int main(int argc, char *argv[])
 {
+	if(argc < 2 || !*argv[1]) { fprintf(stderr, "%s: unknown option. try \"--help\"\n", argv[0]); exit(EXIT_FAILURE); }
+
 	// This program is supposed to output
 	// to a file, but if it doesn't get any arguments
 	// or passed filenames, then it defaults to standard
 	// output
-	FILE *stream = stdout;
+	FILE *stream = nullptr;
 
-	// Example strings, to be deleted
-	char file[] = "error", project[] = "usgen";
+	// Strings to be populated and copied later
+	char file[name_size], project[name_size];
 
 	// There's a good chance that this fits on the stack,
 	// but I have no idea where this code will end up compiled
@@ -126,9 +142,10 @@ int main(int argc, char *argv[])
 	context->filename 	 = malloc(name_size);
 	context->projectname 	 = malloc(name_size);
 	context->stem 		 = malloc(name_size);
-	context->extension 	 = malloc(6);
+	context->extension 	 = malloc(6);		// Really no need for big buffer sizes
 	context->formatted_guard = malloc(buffer_size);
 	context->header 	 = malloc(header_size);
+
 	// And a memory check
 	if(context->filename == nullptr || context->projectname == nullptr ||
 	   context->stem == nullptr 	|| context->extension == nullptr   ||
@@ -143,10 +160,58 @@ int main(int argc, char *argv[])
 	// for us
 	if(atexit(free_struct) < 0) { perror(argv[0]); exit(EXIT_FAILURE); }
 
-	// Set up everything that the user wants
-	setbit(&context->wants, IS_CPP);
-	setbit(&context->wants, ALT_CPP);
-	setbit(&context->wants, ONLY_CPP);
+	int c;
+	while(--argc > 0 && (*++argv)[0] != '\0')
+	{
+		if((*argv)[0] != '-')
+		{
+			if(file[0] != '\0')
+			{
+				fprintf(stderr, "%s: discarded program input -- %s\n", argv[0], *argv);
+				continue;
+			}
+
+			strncpy((project[0] == '\0') ? project : file, *argv, name_size);
+		}
+
+		if((*argv)[0] == '-')
+		{
+			// If there's another dash, then it's a long option.
+			// Move the pointer up 2 places and compare the word itself.
+			if((*argv)[1] == '-')
+			{
+				// Using continue statements here so that the user
+				// can use both single character and long options
+				// simultaniously, and the loop can test both.
+				if(strcmp((*argv) + 2, "help")	   == 0) { show_usage(); exit(EXIT_SUCCESS); }
+				if(strcmp((*argv) + 2, "alt-cpp")  == 0) { setbit(&context->wants, ALT_CPP);  continue; }
+				if(strcmp((*argv) + 2, "cpp")	   == 0) { setbit(&context->wants, IS_CPP);   continue; }
+				if(strcmp((*argv) + 2, "only-cpp") == 0) { setbit(&context->wants, ONLY_CPP); continue; }
+				if(strcmp((*argv) + 2, "preview")  == 0) { stream = stdout; continue; }
+			}
+			while((c = *++argv[0]))
+			{
+				// Single character option testing here.
+				switch(c)
+				{
+					case 'h': show_usage(); exit(EXIT_SUCCESS);
+					case 'a': setbit(&context->wants, ALT_CPP);  break;
+					case 'c': setbit(&context->wants, IS_CPP);   break;
+					case 'o': setbit(&context->wants, ONLY_CPP); break;
+					case 'p': stream = stdout; break;
+					// This error flag can either be set by a
+					// completely unrelated character inputted,
+					// or you managed to put -option instead of
+					// --option.
+					default : fprintf(stderr, "%s: unknown option. try \"--help\"\n", argv[0]); exit(EXIT_FAILURE);
+				}
+
+			}
+
+			continue;
+		}
+
+	}
 
 	strncpy(context->projectname, project, name_size);
 	strncpy(context->filename, file, name_size);
@@ -155,7 +220,8 @@ int main(int argc, char *argv[])
 	make_guard(context);
 	make_header(context);
 
-	// And print it for now
+	// And output it
+	if(stream == nullptr) stream = fopen(context->filename, "w");
 	fprintf(stream, "%s\n", context->header);
 
 	// Clean up
