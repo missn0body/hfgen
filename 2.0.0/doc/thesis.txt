@@ -1,0 +1,24 @@
+I am a lazy bastard and I find header preprocessors, stuff like 'extern "C" {'
+and '#ifndef __cplusplus' to be rather cumbersome. More often than not I have wanted
+a program to spit out a templated version that I can simply start adding code to.
+This isn't something that is always appropriate, but in the last couple of projects
+I've noticed that most of my header files look relatively the same. Maybe that is a
+testament to what I know about preprocessing directives, or maybe that says more about
+the projects I do, but this tool is first and foremost for me.
+
+This program first and foremost has to end #if... directives with a comment block
+(e.g. "/* if statement from earlier */") as a courtesy to those who view the header
+file. This was a limitation that I found earlier with my previous version of 'hfgen'
+and I want to specifically rectify that with this version.
+
+This program also needs to apply guards for C code linked with C++ code as well as to
+protect C++ code from being linked with C code. And of course this current version will
+not be the be-all, end-all version. Products are but hundereds or even thousands of tiny
+iterations and modifications. My needs as well as the needs of the ones who use this code
+will change in the future in ways I can not predict.
+
+The above is subject to non-radical change. The 'sample...' files here are sample output
+that you should expect 'hfgen' to output. These files were originally used for my
+reference, so now they are your references.
+
+- anson <thesearethethingswesaw@gmail.com>

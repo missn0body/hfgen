@@ -1,0 +1,15 @@
+#ifndef hfgen__includes__hpp
+#define hfgen__includes__hpp
+
+#ifndef __cplusplus
+#error This header file is only to be used for C++ code
+#endif /* __cplusplus */
+
+/*
+	Descriptive text goes here
+*/
+
+
+
+#endif /* hfgen__includes__hpp */
+

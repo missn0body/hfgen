@@ -1,0 +1,18 @@
+#ifndef project__file__h
+#define project__file__h
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+/*
+	Descriptive text goes here
+*/
+
+
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* project__file__h */
