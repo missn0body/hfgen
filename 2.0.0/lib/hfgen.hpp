@@ -35,6 +35,12 @@ std::string Mult(const std::string &what, std::size_t count)
 	return ret;
 }
 
+inline std::string ToLower(std::string &&what)
+{
+	std::transform(what.begin(), what.end(), what.begin(), [](unsigned char c){ return std::tolower(c); });
+	return what;
+}
+
 inline std::string MakePreProc(const std::string &what, const std::string &arg = ""s) { return AsString("#", what, " ", arg); }
 inline std::string MakeComment(const std::string &what, bool block = false)
 {
@@ -42,6 +48,12 @@ inline std::string MakeComment(const std::string &what, bool block = false)
 	else if (block == true)  return AsString("/*\n\t", what, "\n*/"); // Newline after 'what', watch out
 	return {};
 }
+
+inline std::string MakeGuard(const std::string &p, const std::string &f, const std::string &e)
+{
+	return AsString(p, "__", f, "__", e);
+}
+
 // This one-liner is a bit more cramped but most of the above functions go
 // making this one-liner possible, maybe I can find a better design for it
 inline std::string MakeIfBlock(const std::string &guard, const std::string &mes = ""s, std::size_t spaces = 1, bool notdefined = false)
