@@ -16,7 +16,7 @@ OBJS = $(patsubst $(SDIR)/%.cpp, $(ODIR)/%.o, $(SRCS))
 all: $(BIN)
 
 $(BIN): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(BDIR)/$@
+	$(CC) $(CFLAGS) $(OBJS) -o $(BDIR)/$@ -ldocopt
 
 $(ODIR)/%.o: $(SDIR)/%.cpp
 	$(CC) $(CFLAGS) -c $< -o $@

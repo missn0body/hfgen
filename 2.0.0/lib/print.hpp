@@ -5,6 +5,11 @@
 #error This header file is to only be used with C++ code
 #endif /* __cplusplus */
 
+/*
+	Wrapper for outputting to C++ streams
+	Made by anson in 2024, see LICENSE for related details
+*/
+
 #include "includes.hpp"
 
 // These do not have an std::ostream object specified, so you will have to specify it
