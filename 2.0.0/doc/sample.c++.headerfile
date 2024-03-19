@@ -1,8 +1,8 @@
-#ifndef hfgen__includes__hpp
-#define hfgen__includes__hpp
+#ifndef project__file__hpp
+#define project__file__hpp
 
 #ifndef __cplusplus
-#error This header file is only to be used for C++ code
+#error This header file is only to be used with C++ code
 #endif /* __cplusplus */
 
 /*
@@ -11,5 +11,5 @@
 
 
 
-#endif /* hfgen__includes__hpp */
+#endif /* project__file__hpp */
 
