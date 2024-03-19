@@ -10,6 +10,7 @@
 	Made by anson in 2024, see LICENSE for related details
 */
 
+#include <algorithm>
 #include <string>
 #include <type_traits>
 
