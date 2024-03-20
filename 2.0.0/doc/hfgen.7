@@ -1,0 +1,63 @@
+.TH hfgen 7 "March 2024" "Version 2.0.0"
+.SH TITLE
+hfgen \- Header File GENerator for C/C++
+.SH SYNOPSIS
+.B hfgen
+.B [-aop]
+.I <project_name>
+.I <filename>
+.PP
+.B hfgen
+.B [-c]
+.I <project_name>
+.I <filename>
+.SH DESCRIPTION
+.B hfgen
+generates C and C++ header files (e.g. ".h", ".hh", ".hpp") which
+automatically have an "include" guard and a comment block for the
+user to write an apt description for their new header file. This
+"include" guard features a #define statement that is created from the
+.I <project_name>
+and
+.I <filename>
+arguments given, producing the format
+"<project_name>__<filename>__<resulting file extension>".
+Each of the potential if-blocks produced in the output file features a
+small comment block containing the testing expression trailing after
+#endif, allowing for easier reading of the output file, especially
+in nested if-blocks. The user is encouraged to keep this standard for
+any user-defined if-blocks.
+.PP
+Upon usage of the
+.B [-c]
+flag, the resulting file will also include an "extern "C" {" guard,
+for linker correction when using C code in a C++ project.
+.PP
+.B hfgen
+also features flags
+.I restricted
+to the creation of C++ header files, which include the
+.B [-a, --alt-cpp]
+and
+.B [-o, --only-cpp]
+flags.
+.PP
+.B hfgen
+is invokable through the terminal.
+.SH OPTIONS
+.IP "-a, --alt-cpp"
+Uses ".hh" instead of ".hpp" for C++ header files
+.IP "-c"
+Signals
+.B hfgen
+to create a C header file
+.IP "-o, --only-cpp"
+Includes a guard to dissuade usage of C++ header files with C code
+.IP "-p, --cpp"
+Signals
+.B hfgen
+to create a C++ header file
+.SH BUGS
+No known bugs.
+.SH AUTHORS
+Written by anson <thesearethethingswesaw@gmail.com>
