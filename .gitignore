@@ -31,5 +31,13 @@
 *.out
 *.app
 
+# Compressed and archived files
+*.tar.gz
+*.tar
+*.gz
+
 # docopt scripts
 *.py
+
+# notes
+TODO

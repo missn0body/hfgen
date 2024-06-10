@@ -1,0 +1,6 @@
+With a couple of months using this program,
+I believe that adding a option to preview
+the generated file would be more helpful for
+the user, so I will add that with this version.
+
+- anson <thesearethethingswesaw@gmail.com>
